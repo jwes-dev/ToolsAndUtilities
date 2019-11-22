@@ -19,26 +19,73 @@ OUTPUT will look something like this
     }
 }
 */
-function GetAnyValue(Element)
-{
-    TagName = Element.tagName;
-    switch(TagName) {
-        case 'SELECT' : return Element.options[Element.selectedIndex].value;
-        default : return Element.value;
-    }
-}
-
-function Submit()
-{
-    var SubmitObject = {};
-    document.querySelectorAll('[submit-object]').forEach(function(Element){
-        FormName = Element.getAttribute('form-name');
-        Name = Element.getAttribute('name');
-        Value = GetAnyValue(Element);
-        if(SubmitObject[FormName] === undefined) {
-            SubmitObject[FormName] = {};
+FormToObject = {
+    GetAnyValue: function (Element) {
+        TagName = Element.tagName;
+        switch (TagName) {
+            case 'INPUT': {
+                switch (Element.getAttribute('type').toLowerCase()) {
+                    case 'checkbox': return Element.checked;
+                    case 'radio': return Element.checked ? Element.value : undefined;
+                    default: Element.value;
+                }
+            }
+            case 'SELECT': return Element.options[Element.selectedIndex].value;
+            default: return Element.value;
         }
-        SubmitObject[FormName][Name] = Value;
-    });
-    return SubmitObject;
+    },
+    FullPage: function () {
+        SubmitObject = {};
+        document.querySelectorAll('[submit-object]').forEach(function (Element) {
+            FormName = Element.getAttribute('form-name');
+            Name = Element.getAttribute('name');
+            Value = FormToObject.GetAnyValue(Element);
+            if(Value === undefined) {
+                return;
+            }
+            if (SubmitObject[FormName] === undefined) {
+                SubmitObject[FormName] = {};
+            }
+            SubmitObject[FormName][Name] = Value;
+        });
+        return SubmitObject;
+    },
+    Form: function (SelectForm) {
+        SubmitObject = {};
+        document.querySelectorAll('[submit-object]').forEach(function (Element) {
+            FormName = Element.getAttribute('form-name');
+            if (FormName !== SelectForm) {
+                return;
+            }
+            Name = Element.getAttribute('name');
+            Value = FormToObject.GetAnyValue(Element);
+            if(Value === undefined) {
+                return;
+            }
+            if (SubmitObject[FormName] === undefined) {
+                SubmitObject[FormName] = {};
+            }
+            SubmitObject[FormName][Name] = Value;
+        });
+        return SubmitObject;
+    },
+    Forms: function (SelectForm) {
+        SubmitObject = {};
+        document.querySelectorAll('[submit-object]').forEach(function (Element) {
+            FormName = Element.getAttribute('form-name');
+            if (!SelectForm.includes(FormName)) {
+                return;
+            }
+            Name = Element.getAttribute('name');
+            Value = FormToObject.GetAnyValue(Element);
+            if(Value === undefined) {
+                return;
+            }
+            if (SubmitObject[FormName] === undefined) {
+                SubmitObject[FormName] = {};
+            }
+            SubmitObject[FormName][Name] = Value;
+        });
+        return SubmitObject;
+    }
 }
