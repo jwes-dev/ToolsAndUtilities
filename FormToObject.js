@@ -28,10 +28,9 @@ function GetAnyValue(Element)
     }
 }
 
-var SubmitObject = {};
-
 function Submit()
 {
+    var SubmitObject = {};
     document.querySelectorAll('[submit-object]').forEach(function(Element){
         FormName = Element.getAttribute('form-name');
         Name = Element.getAttribute('name');
@@ -41,5 +40,5 @@ function Submit()
         }
         SubmitObject[FormName][Name] = Value;
     });
-    console.log(JSON.stringify(SubmitObject));
+    return SubmitObject;
 }
