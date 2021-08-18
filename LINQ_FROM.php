@@ -23,7 +23,6 @@ namespace LINQ {
 
         public function __destruct()
         {
-            echo 'Destroying' . PHP_EOL;
             unset($this->__select);
             unset($this->__collection);
             unset($this->__pathCache);
@@ -42,7 +41,9 @@ namespace LINQ {
             if ($SelectPaths === '*') {
                 $this->__select = [$SelectPaths];
             } else {
-                $this->__select = array_map('trim', explode(',', $SelectPaths));
+                $this->__select = array_map(function ($sel) {
+                    return trim($sel, " *\t\r\n\0\x0B");
+                }, explode(',', $SelectPaths));
             }
             return $this;
         }
@@ -179,15 +180,13 @@ namespace LINQ {
         private function AtPath(string $path, $collection): mixed
         {
             $Paths = $this->SplitPaths($path);
-            $Val = null;
             foreach ($Paths as $sec) {
-                if ($Val == null) {
-                    $Val = $collection[$sec];
-                } else {
-                    $Val = $Val[$sec];
+                if ($sec === '*') {
+                    break;
                 }
+                $collection = $collection[$sec];
             }
-            return $Val;
+            return $collection;
         }
 
         private function SplitPaths(string $Path): array
@@ -227,4 +226,29 @@ namespace LINQ {
             return $Comps;
         }
     }
+
+
+
+
+    $TestArray = [
+        [
+            'Bio' => [
+                'Id' => 1,
+                'Name' => 'John',
+                'Age' => 25,
+            ],
+            'Credit' => 800
+        ],
+        [
+            'Bio' => [
+                'Id' => 1,
+                'Name' => 'Wesley',
+                'Age' => 26,
+            ],
+            'Credit' => 900
+        ]
+    ];
+
+    $from = new From('List');
+    var_dump($from->IN($TestArray)->OrderBy('List.Bio.Name', SORT_DESC)->SELECT('List.Bio.*, List.Credit')->Result());
 }
