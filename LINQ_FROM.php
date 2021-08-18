@@ -2,8 +2,6 @@
 
 namespace LINQ {
 
-    use PhpOffice\PhpSpreadsheet\Worksheet\Row;
-
     class From
     {
         public const OP_EQUALS = 1;
