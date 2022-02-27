@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            background-color: #2d2d2d;
+        }
+    </style>
+    <link rel="stylesheet" href="doubleRange.css">
+</head>
+
+<body>
+    <br><br><br>
+    <div class="range-container" id="demo"></div>
+    <input id="min">
+    <input id="max">
+    <script src="doubleRange.js"></script>
+    <script>
+        let c = new CustomRange(document.querySelector("#demo"), 0, 100, 0, 75);
+        let minInput = document.getElementById("min");
+        let maxInput = document.getElementById("max");
+        c.events.addEventListener("change", function () {
+            minInput.value = c.minValue;
+            maxInput.value = c.maxValue;
+        });
+    </script>
+</body>
+
+</html>
