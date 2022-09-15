@@ -23,7 +23,7 @@ class Db extends \mysqli
 
         public static function CanConnect()
         {
-            $Conn = new self(\R\SqlConfig::Host, \R\SqlConfig::User, \R\SqlConfig::Password, \R\SqlConfig::Database);
+            $Conn = new self($host, $user, $password, $database);
             if (!$Conn) {
                 return false;
             }
@@ -35,8 +35,6 @@ class Db extends \mysqli
         {
             $stmt = $this->prepare($Query);
             if (!$stmt) {
-                if(\R\Mode::$Value === 'DEBUG') {
-                }
                 throw new \Exception("Unable to prepare sql statement");
             }
             if ($Args !== null) {
